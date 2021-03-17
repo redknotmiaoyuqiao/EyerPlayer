@@ -8,6 +8,8 @@ namespace Eyer
     class EyerGLContextIOS : public EyerGLContextThread
     {
     public:
+        EyerGLContextIOS(void * cLayer);
+        
         virtual int Render();
     };
 }

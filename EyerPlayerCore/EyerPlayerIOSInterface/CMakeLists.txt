@@ -2,7 +2,7 @@ include_directories (../)
 include_directories (./)
 
 ADD_LIBRARY(
-        EyerPlayerIOS
+        EyerPlayerIOSInterface
         STATIC
         EyerPlayerIOS_C.h
         EyerPlayerIOS_C.cpp
@@ -10,9 +10,9 @@ ADD_LIBRARY(
         EyerGLContextIOS.cpp
 )
 
-target_link_libraries (EyerPlayerIOS EyerGLContext)
-target_link_libraries (EyerPlayerIOS EyerThread)
-target_link_libraries (EyerPlayerIOS EyerCore)
+target_link_libraries (EyerPlayerIOSInterface EyerGLContext)
+target_link_libraries (EyerPlayerIOSInterface EyerThread)
+target_link_libraries (EyerPlayerIOSInterface EyerCore)
 
 SET(HEADER_FILES
         EyerPlayerIOS_C.h
@@ -49,10 +49,10 @@ ELSE ()
 ENDIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 
-INSTALL(FILES ${HEADER_FILES} DESTINATION include/EyerPlayerIOS)
+INSTALL(FILES ${HEADER_FILES} DESTINATION include/EyerPlayerIOSInterface)
 
 INSTALL(
-        TARGETS EyerPlayerIOS
+        TARGETS EyerPlayerIOSInterface
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib

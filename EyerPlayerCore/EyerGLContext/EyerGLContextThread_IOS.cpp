@@ -5,8 +5,9 @@
 
 namespace Eyer
 {
-    EyerGLContextThread::EyerGLContextThread()
+    EyerGLContextThread::EyerGLContextThread(void * _cLayer)
     {
+        cLayer = _cLayer;
         impl = new EyerGLContextThreadPrivate();
     }
 
@@ -20,7 +21,7 @@ namespace Eyer
 
     int EyerGLContextThread::Init()
     {
-        ios_gl_ctx_init(NULL);
+        ios_gl_ctx_init(cLayer);
         return 0;
     }
 

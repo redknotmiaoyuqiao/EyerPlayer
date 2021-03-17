@@ -43,7 +43,7 @@ cd ${basepath}/Lib/player_install/lib
 
 ar -x libEyerCore.a
 ar -x libEyerGLContext.a
-ar -x libEyerPlayerIOS.a
+ar -x libEyerPlayerIOSInterface.a
 ar -x libEyerThread.a
 
 ar -qcs libEyerPlayer.a *.o

@@ -2,7 +2,7 @@
 
 #import <GLKit/GLKit.h>
 #include "OGLContext.hpp"
-#include "EyerPlayerIOS/EyerPlayerIOS_C.h"
+#include "EyerPlayerIOSInterface/EyerPlayerIOS_C.h"
 
 @implementation OGLView
 
@@ -17,7 +17,8 @@
     if (self) {
         [self setupLayer];
         
-        void * ctx = ios_eyer_gl_ctx_init();
+        void * cLayer = (__bridge void *)self.layer;
+        void * ctx = ios_eyer_gl_ctx_init(cLayer);
     }
     return self;
 }

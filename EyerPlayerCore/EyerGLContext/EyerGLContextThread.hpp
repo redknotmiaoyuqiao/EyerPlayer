@@ -12,7 +12,7 @@ namespace Eyer
 
     class EyerGLContextThread : public EyerThread {
     public:
-        EyerGLContextThread();
+        EyerGLContextThread(void * _cLayer);
         ~EyerGLContextThread();
 
         int Init();
@@ -26,6 +26,7 @@ namespace Eyer
         int GetH();
     private:
         EyerGLContextThreadPrivate * impl = nullptr;
+        void * cLayer = nullptr;
     };
 }
 

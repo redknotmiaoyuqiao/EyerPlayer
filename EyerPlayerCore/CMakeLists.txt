@@ -59,8 +59,20 @@ ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     MESSAGE(STATUS "current platform: Darwin")
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "iOS")
     MESSAGE(STATUS "current platform: iOS")
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -framework OpenGL")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread -framework OpenGL")
+    set(CMAKE_MM_FLAGS "${CMAKE_MM_FLAGS} -pthread -framework OpenGL")
+
+    set(CMAKE_EXE_LINKER_FLAGS
+        "-framework IOKit -framework AudioToolbox -framework CoreGraphics -framework CoreMedia -framework Cocoa -framework VideoToolbox -framework AVFoundation -framework Security -framework CoreFoundation -framework CoreVideo -framework OpenGL -framework AppKit -framework CoreImage -framework VideoDecodeAcceleration"
+    )
+
     SET(CMAKE_MACOSX_RPATH 1)
     ADD_SUBDIRECTORY(EyerPlayerIOS)
+    ADD_SUBDIRECTORY(EyerGLContext)
+    ADD_SUBDIRECTORY(EyerThread)
+    ADD_SUBDIRECTORY(EyerCore)
 ELSE ()
     MESSAGE(STATUS "other platform: ${CMAKE_SYSTEM_NAME}")
 ENDIF (CMAKE_SYSTEM_NAME MATCHES "Linux")

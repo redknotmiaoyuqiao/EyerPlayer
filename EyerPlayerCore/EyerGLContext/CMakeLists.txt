@@ -19,6 +19,15 @@ ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
         add_library(
                 EyerGLContext
                 EyerGLContextThread_Windows.cpp)
+ELSEIF (CMAKE_SYSTEM_NAME MATCHES "iOS")
+        MESSAGE(STATUS "current platform: iOS")
+        add_library(
+                EyerGLContext
+                EyerGL_IOS_Context_C_Interface.h
+                EyerGL_IOS_Context_C_Interface.mm
+                EyerGLContextThread_IOS.cpp
+        )
+
 ELSE ()
         MESSAGE(STATUS "other platform: ${CMAKE_SYSTEM_NAME}")
 ENDIF (CMAKE_SYSTEM_NAME MATCHES "Linux")

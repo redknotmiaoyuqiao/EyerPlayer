@@ -8,7 +8,6 @@
 #import "OGLControllerViewController.h"
 #import <OpenGLES/EAGLIOSurface.h>
 #import <GLKit/GLKit.h>
-#import <EyerPlayerIOS/EyerPlayerIOS.hpp>
 
 #include "OGLView.h"
 
@@ -29,33 +28,19 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    Eyer::EyerPlayerIOS player;
-
+    NSLog(@"OGLControllerViewController viewDidAppear\n");
+    
     int width = self.view.frame.size.width;
     int height = self.view.frame.size.height;
     
     OGLView * oglView = [[OGLView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
     [self.view addSubview:oglView];
-    
-    
-    
-    NSLog(@"width: %d, height: %d\n", width, height);
-    
-    UIButton * btn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    btn.frame = CGRectMake(100, 100, 100, 100);
-    btn.backgroundColor = [UIColor blueColor];
-    
-    [btn setTitle:@"按钮" forState:UIControlStateNormal];
-    [btn setTitle:@"按钮按下" forState:UIControlStateHighlighted];
-    
-    [btn setTitleColor: [UIColor redColor ] forState:UIControlStateNormal];
-    [btn setTitleColor: [UIColor grayColor] forState:UIControlStateHighlighted];
-    
-    [self.view addSubview:btn];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
+    
+    NSLog(@"OGLControllerViewController viewDidDisappear\n");
 }
 
 /*

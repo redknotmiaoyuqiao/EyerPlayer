@@ -1,22 +1,24 @@
 #include "EyerGLContext.hpp"
+#include "EyerGLContextThreadPrivate.hpp"
 
 namespace Eyer
 {
-    EyerGLContextThread::EyerGLContextThread(ANativeWindow * _nativeWindow)
+    EyerGLContextThread::EyerGLContextThread(GLWindows * _nativeWindow)
     {
+        impl = new EyerGLContextThreadPrivate();
         nativeWindow = _nativeWindow;
     }
 
     EyerGLContextThread::~EyerGLContextThread()
     {
-
+        if(impl != nullptr){
+            delete impl;
+            impl = nullptr;
+        }
     }
 
-    void EyerGLContextThread::Run()
+    int EyerGLContextThread::Init()
     {
-
-        EyerLog("EyerGLContextThread Start\n");
-
         const EGLint attrib_config_list[] = {
                 EGL_RENDERABLE_TYPE,    EGL_OPENGL_ES3_BIT,
                 EGL_SURFACE_TYPE,       EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
@@ -34,58 +36,74 @@ namespace Eyer
 
         EGLint num_config;
 
-        mEglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-        if (mEglDisplay == EGL_NO_DISPLAY) {
-            EyerLog("eglGetDisplay error\n");
-            EyerLog("EyerGLContextThread End\n");
-            SetStoping();
-            return;
+        impl->mEglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+        if (impl->mEglDisplay == EGL_NO_DISPLAY) {
+            SvLog("eglGetDisplay error\n");
+            SvLog("SvGLContextThread End\n");
+            return -1;
         }
-        if (!eglInitialize(mEglDisplay, 0, 0)) {
-            EyerLog("eglInitialize() returned error %d\n", eglGetError());
-            EyerLog("EyerGLContextThread End\n");
-            SetStoping();
-            return;
+        if (!eglInitialize(impl->mEglDisplay, 0, 0)) {
+            SvLog("eglInitialize() returned error %d\n", eglGetError());
+            SvLog("SvGLContextThread End\n");
+            return -1;
         }
 
-        if (!eglChooseConfig(mEglDisplay, attrib_config_list, &eglConfig, 1, &num_config)) {
-            EyerLog("eglChooseConfig error\n");
-            EyerLog("EyerGLContextThread End\n");
-            SetStoping();
-            return;
+        if (!eglChooseConfig(impl->mEglDisplay, attrib_config_list, &impl->eglConfig, 1, &num_config)) {
+            SvLog("eglChooseConfig error\n");
+            SvLog("SvGLContextThread End\n");
+            return -1;
         }
 
-        mEglContext = eglCreateContext(mEglDisplay, eglConfig, NULL, attrib_ctx_list);
-        if (mEglContext == EGL_NO_CONTEXT) {
-            EyerLog("eglCreateContext error %d\n", eglGetError());
-            EyerLog("EyerGLContextThread End\n");
-            SetStoping();
-            return;
+        impl->mEglContext = eglCreateContext(impl->mEglDisplay, impl->eglConfig, NULL, attrib_ctx_list);
+        if (impl->mEglContext == EGL_NO_CONTEXT) {
+            SvLog("eglCreateContext error %d\n", eglGetError());
+            SvLog("SvGLContextThread End\n");
+            return -1;
         }
 
-        window = eglCreateWindowSurface(mEglDisplay, eglConfig, nativeWindow, NULL);
-        if(window == EGL_NO_SURFACE) {
-            EyerLog("eglCreateWindowSurface error %d\n", eglGetError());
-            EyerLog("EyerGLContextThread End\n");
-            SetStoping();
-            return;
+        impl->window = eglCreateWindowSurface(impl->mEglDisplay, impl->eglConfig, nativeWindow, NULL);
+        if(impl->window == EGL_NO_SURFACE) {
+            SvLog("eglCreateWindowSurface error %d\n", eglGetError());
+            SvLog("SvGLContextThread End\n");
+            return -1;
         }
 
-        eglMakeCurrent(mEglDisplay, window, window, mEglContext);
+        eglMakeCurrent(impl->mEglDisplay, impl->window, impl->window, impl->mEglContext);
+
+        return 0;
+    }
+
+    int EyerGLContextThread::CreateOESTexture()
+    {
+        return 0;
+    }
+
+    int EyerGLContextThread::Uninit()
+    {
+        eglMakeCurrent(impl->mEglDisplay, impl->window, impl->window, impl->mEglContext);
+
+        eglDestroySurface(impl->mEglDisplay, impl->window);
+        eglDestroyContext(impl->mEglDisplay, impl->mEglContext);
+        eglTerminate(impl->mEglDisplay);
+
+        return 0;
+    }
+
+    void EyerGLContextThread::Run()
+    {
+        EyerLog("EyerGLContextThread Start\n");
+
+        eglMakeCurrent(impl->mEglDisplay, impl->window, impl->window, impl->mEglContext);
 
         glClearColor(0.0, 0.0, 0.0, 1.0);
         Render();
-
-        eglDestroySurface(mEglDisplay, window);
-        eglDestroyContext(mEglDisplay, mEglContext);
-        eglTerminate(mEglDisplay);
 
         EyerLog("EyerGLContextThread End\n");
     }
 
     int EyerGLContextThread::SwapBuffers()
     {
-        eglSwapBuffers(mEglDisplay, window);
+        eglSwapBuffers(impl->mEglDisplay, impl->window);
         return 0;
     }
 

@@ -10,7 +10,7 @@
 #import <GLKit/GLKit.h>
 #import <EyerPlayerIOS/EyerPlayerIOS.hpp>
 
-#include "Test.hpp"
+#include "OGLView.h"
 
 @interface OGLControllerViewController ()
 
@@ -28,12 +28,16 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    Eyer::EyerPlayerIOS player;
 
     int width = self.view.frame.size.width;
     int height = self.view.frame.size.height;
     
-    Eyer::EyerPlayerIOS player;
-    RedknotTest test;
+    OGLView * oglView = [[OGLView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
+    [self.view addSubview:oglView];
+    
+    
     
     NSLog(@"width: %d, height: %d\n", width, height);
     

@@ -13,9 +13,11 @@
 		013D134B26005B2300AC9B7F /* EyerPlayerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 013D134A26005B2300AC9B7F /* EyerPlayerTests.m */; };
 		013D135626005B2300AC9B7F /* EyerPlayerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 013D135526005B2300AC9B7F /* EyerPlayerUITests.m */; };
 		013D136B26005F5B00AC9B7F /* OGLControllerViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 013D136A26005F5B00AC9B7F /* OGLControllerViewController.mm */; };
-		013D137D2600944500AC9B7F /* Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 013D137B2600944500AC9B7F /* Test.cpp */; };
 		017E6EDF2601AFC1001409E0 /* EyerPlayerIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017E6ED42601ADF2001409E0 /* EyerPlayerIOS.framework */; };
 		017E6EE02601AFC1001409E0 /* EyerPlayerIOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 017E6ED42601ADF2001409E0 /* EyerPlayerIOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		017E6EE62601CE99001409E0 /* OGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 017E6EE52601CE99001409E0 /* OGLView.mm */; };
+		017E6EF42601E0D1001409E0 /* OGLContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 017E6EF22601E0D1001409E0 /* OGLContext.cpp */; };
+		017E6EFB2601E158001409E0 /* OGLContext_C_Interface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 017E6EFA2601E158001409E0 /* OGLContext_C_Interface.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,9 +66,13 @@
 		013D135726005B2300AC9B7F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		013D136926005F5B00AC9B7F /* OGLControllerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGLControllerViewController.h; sourceTree = "<group>"; };
 		013D136A26005F5B00AC9B7F /* OGLControllerViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OGLControllerViewController.mm; sourceTree = "<group>"; };
-		013D137B2600944500AC9B7F /* Test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Test.cpp; sourceTree = "<group>"; };
-		013D137C2600944500AC9B7F /* Test.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Test.hpp; sourceTree = "<group>"; };
 		017E6ED42601ADF2001409E0 /* EyerPlayerIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EyerPlayerIOS.framework; path = ../../Lib/player_install/framework/EyerPlayerIOS.framework; sourceTree = "<group>"; };
+		017E6EE42601CE99001409E0 /* OGLView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGLView.h; sourceTree = "<group>"; };
+		017E6EE52601CE99001409E0 /* OGLView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OGLView.mm; sourceTree = "<group>"; };
+		017E6EF22601E0D1001409E0 /* OGLContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OGLContext.cpp; sourceTree = "<group>"; };
+		017E6EF32601E0D1001409E0 /* OGLContext.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OGLContext.hpp; sourceTree = "<group>"; };
+		017E6EF92601E158001409E0 /* OGLContext_C_Interface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGLContext_C_Interface.h; sourceTree = "<group>"; };
+		017E6EFA2601E158001409E0 /* OGLContext_C_Interface.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OGLContext_C_Interface.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,8 +132,12 @@
 				013D134026005B2200AC9B7F /* main.m */,
 				013D136926005F5B00AC9B7F /* OGLControllerViewController.h */,
 				013D136A26005F5B00AC9B7F /* OGLControllerViewController.mm */,
-				013D137B2600944500AC9B7F /* Test.cpp */,
-				013D137C2600944500AC9B7F /* Test.hpp */,
+				017E6EE42601CE99001409E0 /* OGLView.h */,
+				017E6EE52601CE99001409E0 /* OGLView.mm */,
+				017E6EF22601E0D1001409E0 /* OGLContext.cpp */,
+				017E6EF32601E0D1001409E0 /* OGLContext.hpp */,
+				017E6EF92601E158001409E0 /* OGLContext_C_Interface.h */,
+				017E6EFA2601E158001409E0 /* OGLContext_C_Interface.mm */,
 			);
 			path = EyerPlayer;
 			sourceTree = "<group>";
@@ -287,9 +297,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				013D136B26005F5B00AC9B7F /* OGLControllerViewController.mm in Sources */,
-				013D137D2600944500AC9B7F /* Test.cpp in Sources */,
 				013D133026005B2100AC9B7F /* AppDelegate.m in Sources */,
+				017E6EE62601CE99001409E0 /* OGLView.mm in Sources */,
 				013D134126005B2200AC9B7F /* main.m in Sources */,
+				017E6EFB2601E158001409E0 /* OGLContext_C_Interface.mm in Sources */,
+				017E6EF42601E0D1001409E0 /* OGLContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

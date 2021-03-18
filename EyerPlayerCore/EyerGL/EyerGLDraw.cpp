@@ -4,7 +4,7 @@
 
 namespace Eyer
 {
-    EyerGLDraw::EyerGLDraw(EyerString _vertexShaderSrc, EyerString _fragmentShaderSrc, EyerGLContextFunc * _ctx)
+    EyerGLDraw::EyerGLDraw(EyerString _vertexShaderSrc, EyerString _fragmentShaderSrc, EyerGLContext * _ctx)
     {
         ctx = _ctx;
 
@@ -49,10 +49,17 @@ namespace Eyer
         return 0;
     }
 
-    int EyerGLDraw::PutMatrix4fv(EyerString uniform, EyerMat4x4 & mat)
+    int EyerGLDraw::PutMatrix4fv(EyerString uniform, EatrixF4x4 & mat)
     {
         program->UseProgram();
         program->PutMatrix4fv(uniform, mat);
+        return 0;
+    }
+
+    int EyerGLDraw::PutMatrix3fv(EyerString uniform, EatrixF3x3 & mat)
+    {
+        program->UseProgram();
+        program->PutMatrix3fv(uniform, mat);
         return 0;
     }
 
@@ -76,7 +83,7 @@ namespace Eyer
         return 0;
     }
 
-    int EyerGLDraw::Draw()
+    int EyerGLDraw::Draw(EyerGLDrawType drawType)
     {
         if(program == nullptr){
             return -1;
@@ -88,9 +95,9 @@ namespace Eyer
 
         program->UseProgram();
 
-        vao->DrawVAO();
+        vao->DrawVAO(drawType);
 
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         ctx->glFinish();
 #else
         glFinish();

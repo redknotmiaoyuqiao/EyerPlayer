@@ -1,10 +1,6 @@
 include_directories (../)
 include_directories (./)
 
-include_directories (${CMAKE_SOURCE_DIR}/../../Lib/ffmpeg_include/include)
-include_directories (${CMAKE_SOURCE_DIR}/../../Lib/glfw_install/include)
-include_directories (../EyerGLAD/glad/include/)
-
 add_library(
         EyerGL
 
@@ -19,7 +15,7 @@ add_library(
         EyerGLComponent.cpp
         EyerGLRenderTask.cpp
         EyerGLRenderTaskQueue.cpp
-        )
+)
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Linux")
         MESSAGE(STATUS "current platform: Linux")
@@ -35,6 +31,7 @@ ENDIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 set(head_files
         EyerGL.hpp
+        GLHeader.h
         )
 
 INSTALL(FILES ${head_files} DESTINATION include/EyerGL)

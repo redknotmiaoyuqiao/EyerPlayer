@@ -2,6 +2,7 @@
 #define	EYER_LIB_GL_AV_H
 
 #include "EyerCore/EyerCore.hpp"
+#include "EyerMath/EyerMath.hpp"
 #include <vector>
 
 #ifdef QT_EYER_PLAYER
@@ -26,15 +27,23 @@ namespace Eyer
     class EyerGLVAO;
     class EyerGLTexture;
 
-    class _EyerGLContextFunc
+    class _EyerGLContext
     {
     };
 
-#ifdef QT_EYER_PLAYER
-#define EyerGLContextFunc QOpenGLFunctions_3_3_Core
+#ifdef QT_EYER_GL
+#define EyerGLContext QOpenGLFunctions_3_3_Core
 #else
-#define EyerGLContextFunc _EyerGLContextFunc
+#define EyerGLContext _EyerGLContext
 #endif
+
+    enum EyerGLDrawType
+    {
+        TRIANGLES,
+        LINE,
+        LINE_LOOP,
+        POINT
+    };
 
     class EyerGLCMD
     {
@@ -58,9 +67,9 @@ namespace Eyer
         EyerString src;
         unsigned int shaderId = 0;
 
-        EyerGLContextFunc * ctx = nullptr;
+        EyerGLContext * ctx = nullptr;
     public:
-        EyerGLShader(EyerGLShaderType type, EyerString src, EyerGLContextFunc * _ctx = nullptr);
+        EyerGLShader(EyerGLShaderType type, EyerString src, EyerGLContext * _ctx = nullptr);
         ~EyerGLShader();
 
         int Compile();
@@ -76,15 +85,16 @@ namespace Eyer
 
         unsigned int programId = 0;
 
-        EyerGLContextFunc * ctx = nullptr;
+        EyerGLContext * ctx = nullptr;
     public:
-        EyerGLProgram(EyerString vertexShaderSrc, EyerString fragmentShaderSrc, EyerGLContextFunc * _ctx = nullptr);
+        EyerGLProgram(EyerString vertexShaderSrc, EyerString fragmentShaderSrc, EyerGLContext * _ctx = nullptr);
         ~EyerGLProgram();
         int LinkProgram();
         int UseProgram();
 
         int PutUniform1i(EyerString key, int value);
-        int PutMatrix4fv(EyerString key, EyerMat4x4 & mat);
+        int PutMatrix4fv(EyerString key, EatrixF4x4 & mat);
+        int PutMatrix3fv(EyerString key, EatrixF3x3 & mat);
         int PutUniform1f(EyerString key, float value);
     };
 
@@ -97,15 +107,15 @@ namespace Eyer
 
         int DrawTime = 0;
 
-        EyerGLContextFunc * ctx = nullptr;
+        EyerGLContext * ctx = nullptr;
     public:
-        EyerGLVAO(EyerGLContextFunc * ctx = nullptr);
+        EyerGLVAO(EyerGLContext * ctx = nullptr);
         ~EyerGLVAO();
 
         int SetEBO(unsigned int * EBOdata, int bufferSize);
         int AddVBO(float * VBOdata, int bufferSize, int layout, int size = 3, unsigned int stride = 0);
 
-        int DrawVAO();
+        int DrawVAO(EyerGLDrawType drawType);
     };
 
     class EyerGLDrawTexture
@@ -124,36 +134,46 @@ namespace Eyer
         EyerGLProgram * program = nullptr;
         EyerGLVAO * vao = nullptr;
 
-        EyerGLContextFunc * ctx = nullptr;
+        EyerGLContext * ctx = nullptr;
     public:
-        EyerGLDraw(EyerString vertexShaderSrc, EyerString fragmentShaderSrc, EyerGLContextFunc * ctx = nullptr);
+        EyerGLDraw(EyerString vertexShaderSrc, EyerString fragmentShaderSrc, EyerGLContext * ctx = nullptr);
         ~EyerGLDraw();
 
         int Init();
 
         int SetVAO(EyerGLVAO * vao);
         int PutTexture(EyerString uniform, EyerGLTexture * texture, int textureIndex = 0);
-        int PutMatrix4fv(EyerString uniform, EyerMat4x4 & mat);
+        int PutMatrix4fv(EyerString uniform, EatrixF4x4 & mat);
+        int PutMatrix3fv(EyerString uniform, EatrixF3x3 & mat);
         int PutUniform1f(EyerString uniform, float val);
         int PutUniform1i(EyerString uniform, int val);
 
-        int Draw();
+        int Draw(EyerGLDrawType drawType = EyerGLDrawType::TRIANGLES);
+    };
+
+    enum EyerGLTextureType
+    {
+        EYER_GL_TEXTURE_2D = 1,
+        EYER_GL_TEXTURE_EXTERNAL_OES = 2
     };
 
     class EyerGLTexture : public EyerGLCMD
     {
     private:
         unsigned int textureId = 0;
-        EyerGLContextFunc * ctx = nullptr;
+        EyerGLContext * ctx = nullptr;
+
     public:
-        EyerGLTexture(EyerGLContextFunc * ctx = nullptr);
+        int type = -1;
+    public:
+        EyerGLTexture(EyerGLTextureType textureType = EyerGLTextureType::EYER_GL_TEXTURE_2D, EyerGLContext * ctx = nullptr);
         ~EyerGLTexture();
 
         unsigned int GL_GetTextureId();
 
-        int SetDataRedChannel(unsigned char * data,int width,int height);
-        int SetDataRGChannel(unsigned char * data,int width,int height);
-        int SetDataRGBAChannel(unsigned char * data,int width,int height);
+        int SetDataRedChannel   (unsigned char * data,int width,int height);
+        int SetDataRGChannel    (unsigned char * data,int width,int height);
+        int SetDataRGBAChannel  (unsigned char * data,int width,int height);
     };
 
     class EyerGLFrameBuffer : public EyerGLCMD
@@ -164,21 +184,25 @@ namespace Eyer
 
         unsigned int fbo = 0;
 
+        int defaultFBO = 0;
+
         int width = 0;
         int height = 0;
 
         EyerGLTexture * texture = nullptr;
-        EyerGLContextFunc * ctx = nullptr;
+        EyerGLContext * ctx = nullptr;
     public:
-        EyerGLFrameBuffer(int w, int h, EyerGLTexture * texture = nullptr, EyerGLContextFunc * ctx = nullptr);
+        EyerGLFrameBuffer(int w, int h, EyerGLTexture * texture = nullptr, EyerGLContext * ctx = nullptr, int defaultFBO = 0);
         ~EyerGLFrameBuffer();
+
+        int SetWH(int w, int h);
 
         int AddDraw(EyerGLDraw * draw);
         int AddComponent(EyerGLComponent * component);
         int ClearAllComponent();
 
+        int ClearColor(float r, float g, float b, float a);
         int Clear();
-        int Clear(float r, float g, float b, float a);
 
         int Draw();
 
@@ -189,14 +213,30 @@ namespace Eyer
     class EyerGLComponent
     {
     public:
-        int width = 0;
-        int height = 0;
+
     public:
         virtual ~EyerGLComponent();
 
         virtual int Draw() = 0;
 
         int Viewport(int w, int h);
+
+        int SetVP(EatrixF4x4 & _vpMat);
+
+        int SetModel(EectorF3 & _p, EectorF4 & _r, EectorF3 & _s);
+
+        int SetColor(EectorF4 & _color);
+
+    public:
+        int width = 0;
+        int height = 0;
+
+        EatrixF4x4 vpMat;
+        EatrixF4x4 modelMat;
+        EectorF3 p;
+        EectorF3 r;
+        EectorF3 s;
+        EectorF4 color;
     };
 
     class EyerGLRenderTask

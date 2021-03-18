@@ -6,12 +6,12 @@
 
 namespace Eyer
 {
-    EyerGLProgram::EyerGLProgram(EyerString _vertexShaderSrc, EyerString _fragmentShaderSrc, EyerGLContextFunc * _ctx)
+    EyerGLProgram::EyerGLProgram(EyerString _vertexShaderSrc, EyerString _fragmentShaderSrc, EyerGLContext * _ctx)
     {
         ctx = _ctx;
         vertexShaderSrc = _vertexShaderSrc;
         fragmentShaderSrc = _fragmentShaderSrc;
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         programId = ctx->glCreateProgram();
 #else
         programId = glCreateProgram();
@@ -21,7 +21,7 @@ namespace Eyer
     EyerGLProgram::~EyerGLProgram()
     {
         if(programId != 0) {
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
             ctx->glDeleteProgram(programId);
 #else
             glDeleteProgram(programId);
@@ -38,7 +38,7 @@ namespace Eyer
         Eyer::EyerGLShader fragmentShader(Eyer::EyerGLShaderType::FRAGMENT_SHADER, fragmentShaderSrc, ctx);
         fragmentShader.Compile();
 
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         ctx->glAttachShader(programId, vertexShader.GL_GetShaderId());
         ctx->glAttachShader(programId, fragmentShader.GL_GetShaderId());
 
@@ -86,7 +86,7 @@ namespace Eyer
 
     int EyerGLProgram::UseProgram()
     {
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         ctx->glUseProgram(programId);
 #else
         glUseProgram(programId);
@@ -97,7 +97,7 @@ namespace Eyer
 
     int EyerGLProgram::PutUniform1i(EyerString key, int value)
     {
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         GLuint location = ctx->glGetUniformLocation(programId, key.str);
         ctx->glUniform1i(location, value);
 #else
@@ -111,7 +111,7 @@ namespace Eyer
 
     int EyerGLProgram::PutUniform1f(EyerString key, float value)
     {
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         GLuint location = ctx->glGetUniformLocation(programId, key.str);
         ctx->glUniform1f(location, value);
 #else
@@ -122,21 +122,21 @@ namespace Eyer
         return 0;
     }
 
-    int EyerGLProgram::PutMatrix4fv(EyerString key, EyerMat4x4 & _mat)
+    int EyerGLProgram::PutMatrix4fv(EyerString key, EatrixF4x4 & _mat)
     {
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         GLuint location = ctx->glGetUniformLocation(programId, key.str);
 #else
         GLuint location = glGetUniformLocation(programId, key.str);
 #endif
 
 
-        EyerMat4x4 mat = ~_mat;
+        EatrixF4x4 mat = ~_mat;
         int matLen = mat.GetMatLen();
         float * m = (float *)malloc(matLen);
         mat.GetMat(m);
 
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         ctx->glUniformMatrix4fv(location, 1, GL_FALSE, m);
 #else
         glUniformMatrix4fv(location, 1, GL_FALSE, m);
@@ -145,5 +145,27 @@ namespace Eyer
         free(m);
 
         return 0;
+    }
+
+    int EyerGLProgram::PutMatrix3fv(EyerString key, EatrixF3x3 & _mat)
+    {
+#ifdef QT_EYER_GL
+        GLuint location = ctx->glGetUniformLocation(programId, key.str);
+#else
+        GLuint location = glGetUniformLocation(programId, key.str);
+#endif
+
+        EatrixF3x3 mat = ~_mat;
+        int matLen = mat.GetMatLen();
+        float * m = (float *)malloc(matLen);
+        mat.GetMat(m);
+
+#ifdef QT_EYER_GL
+        ctx->glUniformMatrix3fv(location, 1, GL_FALSE, m);
+#else
+        glUniformMatrix4fv(location, 1, GL_FALSE, m);
+#endif
+
+        free(m);
     }
 }

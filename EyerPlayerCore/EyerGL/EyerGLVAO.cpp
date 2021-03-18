@@ -4,11 +4,11 @@
 
 namespace Eyer
 {
-    EyerGLVAO::EyerGLVAO(EyerGLContextFunc * _ctx)
+    EyerGLVAO::EyerGLVAO(EyerGLContext * _ctx)
     {
         ctx = _ctx;
 
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         ctx->glGenVertexArrays(1, &VAOId);
 #else
         glGenVertexArrays(1, &VAOId);
@@ -20,7 +20,7 @@ namespace Eyer
     {
         for(int i=0;i<vboList.size();i++){
             unsigned int vbo = vboList[i];
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
             ctx->glDeleteBuffers(1, &vbo);
 #else
             glDeleteBuffers(1, &vbo);
@@ -30,7 +30,7 @@ namespace Eyer
         vboList.clear();
 
         if(VAOId != 0){
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
             ctx->glDeleteVertexArrays(1, &VAOId);
 #else
             glDeleteVertexArrays(1, &VAOId);
@@ -39,19 +39,41 @@ namespace Eyer
         }
     }
 
-    int EyerGLVAO::DrawVAO()
+    int EyerGLVAO::DrawVAO(EyerGLDrawType drawType)
     {
         if(VAOId == 0){
             return -1;
         }
 
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         ctx->glBindVertexArray(VAOId);
-        ctx->glDrawElements(GL_TRIANGLES, DrawTime, GL_UNSIGNED_INT, 0);
+        if(drawType == EyerGLDrawType::TRIANGLES){
+            ctx->glDrawElements(GL_TRIANGLES, DrawTime, GL_UNSIGNED_INT, 0);
+        }
+        else if(drawType == EyerGLDrawType::LINE_LOOP){
+            ctx->glDrawElements(GL_LINE_LOOP, DrawTime, GL_UNSIGNED_INT, 0);
+        }
+        else if(drawType == EyerGLDrawType::LINE){
+            // glDrawElements(GL_LINE, DrawTime, GL_UNSIGNED_INT, 0);
+        }
+        else if(drawType == EyerGLDrawType::POINT){
+            ctx->glDrawElements(GL_TRIANGLES, DrawTime, GL_UNSIGNED_INT, 0);
+        }
         ctx->glBindVertexArray(0);
 #else
         glBindVertexArray(VAOId);
-        glDrawElements(GL_TRIANGLES, DrawTime, GL_UNSIGNED_INT, 0);
+        if(drawType == EyerGLDrawType::TRIANGLES){
+            glDrawElements(GL_TRIANGLES, DrawTime, GL_UNSIGNED_INT, 0);
+        }
+        else if(drawType == EyerGLDrawType::LINE_LOOP){
+            glDrawElements(GL_LINE_LOOP, DrawTime, GL_UNSIGNED_INT, 0);
+        }
+        else if(drawType == EyerGLDrawType::LINE){
+            // glDrawElements(GL_LINE, DrawTime, GL_UNSIGNED_INT, 0);
+        }
+        else if(drawType == EyerGLDrawType::POINT){
+            glDrawElements(GL_TRIANGLES, DrawTime, GL_UNSIGNED_INT, 0);
+        }
         glBindVertexArray(0);
 #endif
 
@@ -67,7 +89,7 @@ namespace Eyer
 
         DrawTime = bufferSize / (sizeof(int));
 
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         ctx->glBindVertexArray(VAOId);
 
         ctx->glGenBuffers(1,&EBOId);
@@ -90,7 +112,7 @@ namespace Eyer
 
     int EyerGLVAO::AddVBO(float * VBOdata, int bufferSize, int layout, int size, unsigned int stride)
     {
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         ctx->glBindVertexArray(VAOId);
 
         GLuint VBO;

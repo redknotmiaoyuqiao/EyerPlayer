@@ -1,5 +1,6 @@
 #include "EyerGLContextIOS.hpp"
-#include "EyerGLCOntext/EyerGLTestComponent.hpp"
+#include "EyerGLContext/EyerGLTestComponent.hpp"
+#include "EyerGL/EyerGL.hpp"
 
 namespace Eyer
 {
@@ -10,14 +11,16 @@ namespace Eyer
 
     int EyerGLContextIOS::Render()
     {
+        EyerGLFrameBuffer screenFrameBuffer(GetW(), GetH(), nullptr, nullptr, screenFramebuffer);
         EyerGLTestComponent testComponent;
-        // testComponent.SetWH(200, 200);
+        screenFrameBuffer.ClearColor(1.0, 1.0, 1.0, 1.0);
+        screenFrameBuffer.AddComponent(&testComponent);
 
         while(!stopFlag){
-            glViewport(0, 0, 320, 568);
-            glClearColor(0, 1.0, 1.0, 1.0);
-            glClear(GL_COLOR_BUFFER_BIT);
-            testComponent.Draw();
+            screenFrameBuffer.SetWH(GetW(), GetH());
+            screenFrameBuffer.Clear();
+            screenFrameBuffer.Draw();
+
             SwapBuffer();
         }
         

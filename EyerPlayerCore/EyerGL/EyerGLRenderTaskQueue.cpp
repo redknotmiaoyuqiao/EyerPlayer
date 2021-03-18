@@ -40,8 +40,6 @@ namespace Eyer
             task->SetWH(w, h);
             task->Render();
 
-            task->Destory();
-
             delete task;
         }
 

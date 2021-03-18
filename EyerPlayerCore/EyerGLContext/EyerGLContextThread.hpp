@@ -26,7 +26,8 @@ namespace Eyer
         int SetWH(int w, int h);
         int GetW();
         int GetH();
-    private:
+    protected:
+        int screenFramebuffer = 0;
         EyerGLContextThreadPrivate * impl = nullptr;
     };
 }

@@ -21,7 +21,7 @@ namespace Eyer
 
     int EyerGLContextThread::Init()
     {
-        impl->ctx = ios_gl_ctx_init(impl->cLayer);
+        impl->ctx = ios_gl_ctx_init(impl->cLayer, &screenFramebuffer);
         return 0;
     }
 

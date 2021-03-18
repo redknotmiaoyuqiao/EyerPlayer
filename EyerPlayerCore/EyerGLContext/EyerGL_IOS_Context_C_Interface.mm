@@ -8,7 +8,7 @@ int ios_gl_ctx_test_add(int a, int b)
     return a + b;
 }
 
-void *      ios_gl_ctx_init             (void * cLayer)
+void *      ios_gl_ctx_init             (void * cLayer, int * screenFramebuffer)
 {
     CAEAGLLayer * eaglLayer = (__bridge CAEAGLLayer *)cLayer;
 
@@ -25,6 +25,8 @@ void *      ios_gl_ctx_init             (void * cLayer)
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderBuffer);
     
     [context renderbufferStorage:GL_RENDERBUFFER fromDrawable:eaglLayer];
+
+    *screenFramebuffer = framebuffer;
 
     glClearColor(0, 1.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);

@@ -4,9 +4,10 @@
 
 #include "EyerGLContextIOS.hpp"
 
-void * ios_eyer_gl_ctx_init(void * cLayer)
+void * ios_eyer_gl_ctx_init(void * cLayer, int w, int h)
 {
     Eyer::EyerGLContextIOS * ctx = new Eyer::EyerGLContextIOS(cLayer);
+    ctx->SetWH(w, h);
     ctx->Start();
     return (void *)ctx;
 }

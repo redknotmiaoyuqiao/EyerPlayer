@@ -3,9 +3,11 @@
 #include "GLHeader.h"
 
 namespace Eyer {
-    EyerGLFrameBuffer::EyerGLFrameBuffer(int w, int h, EyerGLTexture * _texture, EyerGLContextFunc * _ctx)
+    EyerGLFrameBuffer::EyerGLFrameBuffer(int w, int h, EyerGLTexture * _texture, EyerGLContext * _ctx, int _defaultFBO)
     {
         ctx = _ctx;
+
+        defaultFBO = _defaultFBO;
 
         width = w;
         height = h;
@@ -13,51 +15,49 @@ namespace Eyer {
         texture = _texture;
         if(texture == nullptr){
             // 使用默认 Framebuffer
-            fbo = 0;
+            fbo = defaultFBO;
         }
         else{
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
             ctx->glGenFramebuffers(1, &fbo);
             ctx->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-#else
-            glGenFramebuffers(1, &fbo);
-            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-#endif
-
 
             texture->SetDataRGBAChannel(nullptr, width, height);
 
-#ifdef QT_EYER_PLAYER
             ctx->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->GL_GetTextureId(), 0);
-#else
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->GL_GetTextureId(), 0);
-#endif
-
-#ifdef QT_EYER_PLAYER
             GLenum status = ctx->glCheckFramebufferStatus(GL_FRAMEBUFFER);
-#else
-            GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-#endif
 
             if (status != GL_FRAMEBUFFER_COMPLETE) {
                 EyerLog("GL_FRAMEBUFFER_COMPLETE Error!!!!\n");
-
                 if(fbo != 0){
-#ifdef QT_EYER_PLAYER
                     ctx->glDeleteFramebuffers(1, &fbo);
-#else
-                    glDeleteFramebuffers(1, &fbo);
-#endif
-                    fbo = 0;
+                    fbo = defaultFBO;
                 }
             }
+#else
+            glGenFramebuffers(1, &fbo);
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+            texture->SetDataRGBAChannel(nullptr, width, height);
+
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture->type, texture->GL_GetTextureId(), 0);
+            GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+            if (status != GL_FRAMEBUFFER_COMPLETE) {
+                EyerLog("GL_FRAMEBUFFER_COMPLETE Error!!!!\n");
+                if(fbo != 0){
+                    glDeleteFramebuffers(1, &fbo);
+                    fbo = defaultFBO;
+                }
+            }
+#endif
         }
     }
 
     EyerGLFrameBuffer::~EyerGLFrameBuffer()
     {
         if(fbo != 0){
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
             ctx->glDeleteFramebuffers(1, &fbo);
 #else
             glDeleteFramebuffers(1, &fbo);
@@ -66,6 +66,13 @@ namespace Eyer {
         }
         drawList.clear();
         componentList.clear();
+    }
+
+    int EyerGLFrameBuffer::SetWH(int w, int h)
+    {
+        width = w;
+        height = h;
+        return 0;
     }
 
     int EyerGLFrameBuffer::AddDraw(EyerGLDraw * draw)
@@ -88,7 +95,7 @@ namespace Eyer {
 
     int EyerGLFrameBuffer::Draw()
     {
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         ctx->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
         ctx->glViewport(0, 0, width, height);
 #else
@@ -114,9 +121,24 @@ namespace Eyer {
             }
         }
 
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         ctx->glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #else
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#endif
+
+        return 0;
+    }
+
+    int EyerGLFrameBuffer::ClearColor(float r, float g, float b, float a)
+    {
+#ifdef QT_EYER_GL
+        ctx->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        ctx->glClearColor(r, g, b, a);
+        ctx->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#else
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glClearColor(r, g, b, a);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif
 
@@ -125,46 +147,29 @@ namespace Eyer {
 
     int EyerGLFrameBuffer::Clear()
     {
-        return Clear(1.0, 1.0, 1.0, 1.0);
-    }
-
-    int EyerGLFrameBuffer::Clear(float r, float g, float b, float a)
-    {
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         ctx->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        ctx->glViewport(0, 0, width, height);
-        ctx->glClearColor(r, g, b, a);
         ctx->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         ctx->glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #else
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        glViewport(0, 0, width, height);
-        glClearColor(r, g, b, a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif
-
         return 0;
     }
 
     int EyerGLFrameBuffer::ReadPixel(int x, int y, int width, int height, unsigned char * data)
     {
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         ctx->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        ctx->glReadPixels(x, y, width, height, GL_BGR, GL_UNSIGNED_BYTE, data);
+        ctx->glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
         ctx->glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #else
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-        #ifdef EYER_PLATFORM_ANDROID
         glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-        #else
-        glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-        #endif
-        
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif
-
         return 0;
     }
 }

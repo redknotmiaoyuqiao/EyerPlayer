@@ -3,7 +3,7 @@
 #include "GLHeader.h"
 
 namespace Eyer{
-    EyerGLShader::EyerGLShader(EyerGLShaderType _type, EyerString _src, EyerGLContextFunc * _ctx)
+    EyerGLShader::EyerGLShader(EyerGLShaderType _type, EyerString _src, EyerGLContext * _ctx)
     {
         ctx = _ctx;
 
@@ -18,7 +18,7 @@ namespace Eyer{
             shaderType = GL_FRAGMENT_SHADER;
         }
 
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         shaderId = ctx->glCreateShader(shaderType);
 #else
         shaderId = glCreateShader(shaderType);
@@ -29,7 +29,7 @@ namespace Eyer{
     EyerGLShader::~EyerGLShader()
     {
         if(shaderId != 0){
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
             ctx->glDeleteShader(shaderId);
 #else
             glDeleteShader(shaderId);
@@ -45,7 +45,7 @@ namespace Eyer{
             return -1;
         }
 
-#ifdef QT_EYER_PLAYER
+#ifdef QT_EYER_GL
         // EyerLog("Shader Src:\n %s\n", src.str);
         ctx->glShaderSource(shaderId, 1, &src.str , NULL);
         ctx->glCompileShader(shaderId);

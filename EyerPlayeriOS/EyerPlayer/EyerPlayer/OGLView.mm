@@ -17,8 +17,11 @@
     if (self) {
         [self setupLayer];
         
+        int width = (int)frame.size.width;
+        int height = (int)frame.size.height;
+        
         void * cLayer = (__bridge void *)self.layer;
-        void * ctx = ios_eyer_gl_ctx_init(cLayer);
+        void * ctx = ios_eyer_gl_ctx_init(cLayer, width, height);
     }
     return self;
 }

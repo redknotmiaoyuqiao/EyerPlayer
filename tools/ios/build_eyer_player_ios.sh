@@ -45,5 +45,6 @@ ar -x libEyerCore.a
 ar -x libEyerGLContext.a
 ar -x libEyerPlayerIOSInterface.a
 ar -x libEyerThread.a
+ar -x libEyerGL.a
 
 ar -qcs libEyerPlayer.a *.o

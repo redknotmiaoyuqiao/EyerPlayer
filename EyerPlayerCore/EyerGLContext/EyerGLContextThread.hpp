@@ -21,12 +21,13 @@ namespace Eyer
         virtual void Run();
         virtual int Render() = 0;
 
+        int SwapBuffer();
+
         int SetWH(int w, int h);
         int GetW();
         int GetH();
     private:
         EyerGLContextThreadPrivate * impl = nullptr;
-        void * cLayer = nullptr;
     };
 }
 

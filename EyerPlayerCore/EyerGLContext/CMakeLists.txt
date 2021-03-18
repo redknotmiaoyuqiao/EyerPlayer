@@ -26,6 +26,8 @@ ELSEIF (CMAKE_SYSTEM_NAME MATCHES "iOS")
                 EyerGL_IOS_Context_C_Interface.h
                 EyerGL_IOS_Context_C_Interface.mm
                 EyerGLContextThread_IOS.cpp
+                EyerGLTestComponent.hpp
+                EyerGLTestComponent.cpp
         )
 
 ELSE ()

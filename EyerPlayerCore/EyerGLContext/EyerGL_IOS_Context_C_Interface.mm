@@ -8,7 +8,7 @@ int ios_gl_ctx_test_add(int a, int b)
     return a + b;
 }
 
-void * ios_gl_ctx_init(void * cLayer)
+void *      ios_gl_ctx_init             (void * cLayer)
 {
     CAEAGLLayer * eaglLayer = (__bridge CAEAGLLayer *)cLayer;
 
@@ -30,10 +30,22 @@ void * ios_gl_ctx_init(void * cLayer)
     glClear(GL_COLOR_BUFFER_BIT);
     [context presentRenderbuffer:GL_RENDERBUFFER];
 
-    return NULL;
+    void * _ctx = (__bridge void *)context;
+
+    return _ctx;
 }
 
-int ios_gl_ctx_uninit(void * ctx)
+int         ios_gl_ctx_uninit           (void * _ctx)
 {
+    EAGLContext * context = (__bridge EAGLContext *)_ctx;
+    return 0;
+}
+
+int         ios_gl_ctx_swapbuffer       (void * _ctx)
+{
+    EAGLContext * context = (__bridge EAGLContext *)_ctx;
+
+    [context presentRenderbuffer:GL_RENDERBUFFER];
+
     return 0;
 }

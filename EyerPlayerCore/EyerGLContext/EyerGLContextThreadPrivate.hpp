@@ -8,6 +8,16 @@ namespace Eyer
     public:
         int w = 0;
         int h = 0;
+
+#ifdef EYER_PLATFORM_ANDROID
+
+#endif
+
+#ifdef EYER_PLATFORM_IOS
+        void * cLayer = nullptr;
+        void * ctx = nullptr;
+#endif
+
     };
 }
 

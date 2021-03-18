@@ -159,7 +159,7 @@ namespace Eyer {
         #ifdef EYER_PLATFORM_ANDROID
         glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
         #else
-        glReadPixels(x, y, width, height, GL_BGR, GL_UNSIGNED_BYTE, data);
+        glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
         #endif
         
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

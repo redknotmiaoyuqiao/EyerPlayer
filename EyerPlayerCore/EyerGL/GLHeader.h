@@ -1,27 +1,23 @@
 #ifndef EYE_LIB_GLHEADER_H
 #define EYE_LIB_GLHEADER_H
 
-#ifdef QT_EYER_PLAYER
-#else
-#endif
+#define	EYER_GL_STRINGIZE(x)	#x
+#define	EYER_GL_SHADER(shader) "" EYER_GL_STRINGIZE(shader)
 
-#ifdef QT_EYER_PLAYER
-
-#include <QOpenGLWidget>
-#include <QOpenGLFunctions_3_3_Core>
-
-#elif defined(EYER_PLATFORM_ANDROID)
-
+#ifdef EYER_PLATFORM_ANDROID
 #include <EGL/egl.h>
 #include <GLES3/gl3.h>
 #include <GLES3/gl3ext.h>
-
-#else
-
-// #include <glad/glad.h>
-// #include <GLFW/glfw3.h>
-
 #endif
 
+#ifdef EYER_PLATFORM_IOS
+
+#import <OpenGLES/gltypes.h>
+#import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
+#import <OpenGLES/ES2/gl.h>
+#import <OpenGLES/ES2/glext.h>
+
+#endif
 
 #endif //EYE_LIB_GLHEADER_H

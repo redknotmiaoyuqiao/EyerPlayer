@@ -7,8 +7,8 @@ namespace Eyer
 {
     EyerGLContextThread::EyerGLContextThread(void * _cLayer)
     {
-        cLayer = _cLayer;
         impl = new EyerGLContextThreadPrivate();
+        impl->cLayer = _cLayer;
     }
 
     EyerGLContextThread::~EyerGLContextThread()
@@ -21,13 +21,13 @@ namespace Eyer
 
     int EyerGLContextThread::Init()
     {
-        ios_gl_ctx_init(cLayer);
+        impl->ctx = ios_gl_ctx_init(impl->cLayer);
         return 0;
     }
 
     int EyerGLContextThread::Uninit()
     {
-        return 0;
+        return ios_gl_ctx_uninit(impl->ctx);
     }
 
     void EyerGLContextThread::Run()
@@ -37,6 +37,11 @@ namespace Eyer
         Render();
         Uninit();
         EyerLog("EyerGLContextThread End\n");
+    }
+
+    int EyerGLContextThread::SwapBuffer()
+    {
+        return ios_gl_ctx_swapbuffer(impl->ctx);
     }
 
     int EyerGLContextThread::SetWH(int w, int h)
